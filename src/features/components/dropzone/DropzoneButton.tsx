@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { IconCloudUpload, IconDownload, IconX } from '@tabler/icons-react';
 import { Button, Group, Text, useMantineTheme } from '@mantine/core';
 import { Dropzone, MIME_TYPES, DropzoneProps } from '@mantine/dropzone';
 import classes from './DropzoneButton.module.css';
 import { notifications } from '@mantine/notifications';
+import { commonNotificationStyles, getErrorNotificationStyles } from '../../../styles/commonStyles';
 
 const IMAGE_MIME_TYPES = [MIME_TYPES.png, MIME_TYPES.jpeg, 'image/jpg'];
 
@@ -14,11 +15,19 @@ type DropzoneButtonProps = {
 export function DropzoneButton({ setFile }: DropzoneButtonProps) {
   const theme = useMantineTheme();
   const openRef = useRef<() => void>(null);
-  const [error, setError] = useState<string | null>(null);
+
+  // Show notification and clear error state
+  const showError = (msg: string) => {
+    notifications.show({
+      title: 'File upload error',
+      message: msg,
+      ...commonNotificationStyles,
+      ...getErrorNotificationStyles(theme),
+    });
+  };
 
   // Handle file drop event
   const handleDrop: DropzoneProps['onDrop'] = (files) => {
-    setError(null);
     if (setFile && files[0]) {
       setFile(files[0]);
     }
@@ -29,30 +38,12 @@ export function DropzoneButton({ setFile }: DropzoneButtonProps) {
     if (fileRejections && fileRejections.length > 0) {
       const reason = fileRejections[0].errors[0];
       if (reason.code === 'file-too-large') {
-        setError('File is too large. Please select an image under 5MB.');
+        showError('File is too large. Please select an image under 5MB.');
       } else if (reason.code === 'file-invalid-type') {
-        setError('Invalid file type. Only .jpg, .jpeg, .png files are allowed.');
+        showError('Invalid file type. Only .jpg, .jpeg, .png files are allowed.');
       } else {
-        setError('File could not be accepted.');
+        showError('File could not be accepted.');
       }
-      notifications.show({
-        title: 'File upload error',
-        message: error || 'File upload error',
-        color: 'white',
-        withBorder: true,
-        autoClose: 6000,
-        styles: {
-          root: {
-            backgroundColor: theme.colors.red[6],
-          },
-          description: {
-            color: theme.colors.gray[3],
-          },
-          title: {
-            color: theme.white,
-          }
-        },
-      });
     }
   };
 
