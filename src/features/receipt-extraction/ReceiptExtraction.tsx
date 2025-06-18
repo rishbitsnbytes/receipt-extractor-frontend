@@ -7,6 +7,7 @@ import { ExtractionResult } from '../components';
 import { notifications } from '@mantine/notifications';
 import { commonNotificationStyles, getErrorNotificationStyles } from '../../styles/commonStyles';
 import type { ExtractionData } from '../types';
+import axios, { AxiosResponse } from 'axios';
 
 type ExtractionStep = 'select' | 'preview' | 'loading' | 'result' | 'error';
 
@@ -31,42 +32,31 @@ export function ReceiptExtraction(): React.ReactElement {
     setError(null);
   };
 
-  // Handle extract action (simulate API call)
+  // Handle extract action
   const handleExtract = async () => {
     setStep('loading');
     setError(null);
     try {
       const formData = new FormData();
       if (file) formData.append('file', file);
-      setTimeout(() => {
-        // const sampleNullData: ExtractionData = {
-        //   imageUrl: file ? URL.createObjectURL(file) : '',
-        //   date: null,
-        //   currency: null,
-        //   vendor: null,
-        //   items: [],
-        //   tax: null,
-        //   total: null,
-        // }
-        const sampleMockData: ExtractionData = {
-          imageUrl: file ? URL.createObjectURL(file) : '',
-          date: '2025-06-13',
-          currency: 'USD',
-          vendor: 'Sample Vendor',
-          items: [
-            { name: 'Item 1', cost: '$ 10' },
-            { name: 'Item 2', cost: '$ 20' },
-            { name: 'Item 3', cost: '$ 3' },
-            { name: 'Item 4', cost: '$ 0' },
-            { name: 'Item 5', cost: '$ 0' },
-          ],
-          tax: 60,
-          total: 33,
-        }
 
-        setResult(sampleMockData);
-        setStep('result');
-      }, 2000);
+      // Send the file to the backend for extraction
+      const response: AxiosResponse<ExtractionData> = await axios.post(
+        `${import.meta.env.VITE_APP_BACKEND_BASE_URL}/extract-receipt-details`,
+        formData
+      );
+
+      const extractedData: ExtractionData = response.data;
+
+      // Set the result and change step to result
+      setResult(extractedData);
+      setStep('result');
+      // Show success notification
+      notifications.show({
+        title: 'Extraction successful',
+        message: 'Receipt details extracted successfully!',
+        ...commonNotificationStyles,
+      });
     } catch (err: unknown) {
       setError('Extraction failed!');
       setStep('error');
@@ -108,7 +98,7 @@ export function ReceiptExtraction(): React.ReactElement {
             Receipt Extractor
           </Text>
           <Text ta="center" c="dimmed" size="lg" px="xl" maw={'70%'}>
-            Upload a receipt image to extract details like vendor, date, currency, items, taxand total cost.
+            Upload a receipt image to extract details like vendor, date, currency, items, tax and total cost.
           </Text>
         </Stack>
         {step === 'select' ? <DropzoneButton setFile={handleFileSelect} /> : null}

@@ -95,7 +95,7 @@ export function ExtractionResult({ data, onRestart, error }: ExtractionResultPro
                         )}
                       </Box>
                       {item.cost ? (
-                        <Text>{item.cost}</Text>
+                        <Text>{data.currency ?? ''} {item.cost}</Text>
                       ) : (
                         <Missing label="Item cost" />
                       )}
@@ -110,7 +110,7 @@ export function ExtractionResult({ data, onRestart, error }: ExtractionResultPro
                 <>
                   <Group justify="space-between">
                     <Text>GST/Tax</Text>
-                    <Text>{data.tax}</Text>
+                    <Text>{data.currency ?? ''} {data.tax}</Text>
                   </Group>
                   <Divider />
                 </>
@@ -121,7 +121,7 @@ export function ExtractionResult({ data, onRestart, error }: ExtractionResultPro
                 {data.total && typeof data.total === 'number' && !isNaN(data.total) ? (
                   <Group justify='space-between' w="100%">
                     <Text fw={700}>Total</Text>
-                    <Text fw={700}>{data.total}</Text>
+                    <Text fw={700}>{data.currency ?? ''} {data.total}</Text>
                   </Group>
                 ) : (
                   <Missing label="Total" />

@@ -1,9 +1,10 @@
 export interface ReceiptItem {
-  name: string;
-  cost: number | string;
+  name: string | null;
+  cost: number | string | null;
 }
 
 export interface ExtractionData {
+  id?: string;
   imageUrl: string;
   date: string | null;
   currency: string | null;
