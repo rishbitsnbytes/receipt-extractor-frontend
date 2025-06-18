@@ -102,7 +102,7 @@ This project allows users to upload receipt images and extract details such as v
    - Example:
      ```
      VITE_APP_NAME="Receipt Extractor"
-     VITE_API_BASE_URL=http://localhost:5173
+     VITE_APP_BASE_URL=http://localhost:5173
      VITE_APP_BACKEND_BASE_URL=http://localhost:3000
      ```
 
@@ -113,7 +113,7 @@ This project allows users to upload receipt images and extract details such as v
 | Variable                       | Description                        | Example Value                |
 |---------------------------------|------------------------------------|------------------------------|
 | `VITE_APP_NAME`                 | Application name                   | "Receipt Extractor"          |
-| `VITE_API_BASE_URL`             | Frontend base URL                  | http://localhost:5173        |
+| `VITE_APP_BASE_URL`             | Frontend base URL                  | http://localhost:5173        |
 | `VITE_APP_BACKEND_BASE_URL`     | The URL of the backend API         | http://localhost:3000        |
 
 ---
