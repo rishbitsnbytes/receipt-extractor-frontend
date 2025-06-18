@@ -11,6 +11,11 @@ import axios, { AxiosResponse } from 'axios';
 
 type ExtractionStep = 'select' | 'preview' | 'loading' | 'result' | 'error';
 
+const backendUrl = import.meta.env.VITE_APP_BACKEND_BASE_URL;
+if (!backendUrl) {
+  throw new Error('VITE_APP_BACKEND_BASE_URL is not set');
+}
+
 export function ReceiptExtraction(): React.ReactElement {
   const [file, setFile] = useState<File | null>(null);
   const [step, setStep] = useState<ExtractionStep>('select');
@@ -42,7 +47,7 @@ export function ReceiptExtraction(): React.ReactElement {
 
       // Send the file to the backend for extraction
       const response: AxiosResponse<ExtractionData> = await axios.post(
-        `${import.meta.env.VITE_APP_BACKEND_BASE_URL}/extract-receipt-details`,
+        `${backendUrl}/extract-receipt-details`,
         formData
       );
 
